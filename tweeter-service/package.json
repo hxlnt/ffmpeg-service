@@ -1,0 +1,15 @@
+{
+  "name": "tweeter-service",
+  "version": "1.0.0",
+  "description": "makes the tweets",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Adina Shanholtz and Suz Hinton",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.2",
+    "twit": "^2.2.5"
+  }
+}
