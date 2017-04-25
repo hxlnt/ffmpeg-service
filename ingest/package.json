@@ -1,0 +1,11 @@
+{
+  "name": "ingest",
+  "version": "1.0.0",
+  "description": "ingests content for ffmpeg converter",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "rachel weil",
+  "license": "ISC"
+}
