@@ -9,6 +9,7 @@
   "author": "Adina Shanholtz and Suz Hinton",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "twit": "^2.2.5"
   }
