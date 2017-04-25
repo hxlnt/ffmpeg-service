@@ -1,2 +1,2 @@
 const magikc = require('./magikc');
-module.exports = magikc;
+module.exports = magikc.convert;

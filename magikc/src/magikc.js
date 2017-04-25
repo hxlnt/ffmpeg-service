@@ -10,24 +10,15 @@ if (!fs.existsSync(rootDir)) {
 }
 
 module.exports = {
-  magikc
+  convert,
+  download
 };
 
-// 512mb max
-// 2m 20 seconds max
-// filename is guid
+function download(file, cb) {
+  // TODO
+}
 
-// {
-//   image: url;
-//   audio: url;
-// } => gif
-
-//ffmpeg -loop 1 -i /mnt/c/Users/brhugh/Downloads/Sailor_saturn.jpg -i /mnt/c/Users/brhugh/Downloads/output.mp3 -c:v libx264 -c:a aac -b:a 192k -shortest out.mp4
-// /mnt/c/Users/brhugh/Downloads/output.mp3
-// /mnt/c/Users/brhugh/Downloads/Sailor_saturn.jpg
-
-function magikc({ image, audio }, cb) {
-
+function convert({ image, audio }, cb) {
   let errored = false;
   const outputPath = path.join(rootDir, `${uuid()}.mp4`);
   const ffmpeg = spawn('ffmpeg', [ '-loop', '1', '-i', image, '-i', audio, '-shortest', outputPath ], { stdio: 'inherit' });
