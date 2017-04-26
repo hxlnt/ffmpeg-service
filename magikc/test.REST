@@ -1,0 +1,7 @@
+POST http://localhost:3001/api/create HTTP/1.1
+content-type: application/json
+
+{
+    "audio": "https://archive.org/download/Holst-ThePlanets/Saturno.mp3",
+    "image": "https://pbs.twimg.com/media/CYC2lyNUwAAIE-R.jpg"
+}

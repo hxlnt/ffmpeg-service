@@ -3,6 +3,13 @@ const os = require('os');
 const path = require('path');
 const uuid = require('uuid');
 const fs = require('fs');
+const request = require('request');
+const async = require('async');
+
+const WIDTH = 640;
+const HEIGHT = 480;
+
+const MAX_LENGTH = 30;
 
 const rootDir = path.join(os.tmpdir(), 'magikc');
 if (!fs.existsSync(rootDir)) {
@@ -14,18 +21,36 @@ module.exports = {
   download
 };
 
-function download(file, cb) {
-  // TODO
+function download(uri, cb) {
+  const outputPath = path.join(rootDir, `${uuid()}-${path.basename(uri)}`);
+  request.get(uri).pipe(fs.createWriteStream(outputPath))
+    .on('error', cb)
+    .on('finish', () => cb(null, outputPath));
 }
 
 function convert({ image, audio }, cb) {
   let errored = false;
   const outputPath = path.join(rootDir, `${uuid()}.mp4`);
-  const ffmpeg = spawn('ffmpeg', [ '-loop', '1', '-i', image, '-i', audio, '-shortest', outputPath ], { stdio: 'inherit' });
+  const args = [ '-loop', '1', '-i', image, '-i', audio, '-t', MAX_LENGTH, '-vf', `scale=${WIDTH}:ih*${WIDTH}/iw, crop=${WIDTH}:${HEIGHT}`, '-shortest', outputPath ];
+  const ffmpeg = spawn('ffmpeg', args);
+
+  function finalize(err, filepath) {
+    console.log('MAGIKC: Deleting intermediate files');
+    async.parallel([
+      (next) => fs.unlink(image, next),
+      (next) => fs.unlink(audio, next)
+    ], () => {
+      if (err) {
+        cb(err);
+        return;
+      }
+      cb(err, filepath);
+    });
+  }
 
   ffmpeg.on('error', (err) => {
     if (!errored) {
-      cb(err);
+      finalize(err);
       ffmpeg.kill();
       errored = true;
     }
@@ -36,8 +61,8 @@ function convert({ image, audio }, cb) {
       return;
     }
     if (code) {
-      cb(`Exited with code ${code}`);
+      finalize(`Exited with code ${code}`);
     }
-    cb(null, outputPath);
+    finalize(null, outputPath);
   });
 }
