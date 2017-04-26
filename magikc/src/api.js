@@ -10,6 +10,7 @@ app.post('/api/create', (req, res) => {
   console.log('MAGIKC: Received request for:');
   console.log(`  Audio: ${req.body.audio}`);
   console.log(`  Image: ${req.body.image}`);
+  const startTime = Date.now();
   async.parallel({
     audio: (next) => magikc.download(req.body.audio, next),
     image: (next) => magikc.download(req.body.image, next),
@@ -18,15 +19,13 @@ app.post('/api/create', (req, res) => {
       res.sendStatus(500, err);
       return;
     }
-    console.log('MAGIKC: Intermediate files written to:');
-    console.log(`  Audio: ${results.audio}`);
-    console.log(`  Image: ${results.image}`);
     magikc.convert(results, (err, filepath) => {
       if (err) {
         res.sendStatus(500, err);
         return;
       }
       console.log(`MAGIKC: Encoded file written to: ${filepath}`);
+      console.log(`MAGIKC: Request took ${Date.now() - startTime}ms`);
       // Call next endpoint here;
       res.send('ok');
     });
