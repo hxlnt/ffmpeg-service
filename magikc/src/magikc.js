@@ -11,8 +11,8 @@ const WIDTH = 640;
 const HEIGHT = 480;
 
 const MAX_LENGTH = 5;
-const MIN_OFFSET = 60;
-const MAX_OFFSET = 60 * 60;
+const MIN_OFFSET = 10;
+const MAX_OFFSET = 240;
 
 const rootDir = path.join(os.tmpdir(), 'magikc');
 if (!fs.existsSync(rootDir)) {
@@ -47,17 +47,20 @@ function hashFilePath(filepath) {
 
 function convert({ image, audio }, cb) {
   let errored = false;
-  const outputPath = path.join(rootDir, `${hashFilePath(image)}-${hashFilePath(audio)}.mp4`);
+  const filename = `${hashFilePath(image)}-${hashFilePath(audio)}.mp4`;
+  const intermediate = path.join(rootDir, filename);
+  const final = path.join(rootDir, 'h' + filename);
 
-  fs.exists(outputPath, (exists) => {
+  fs.exists(final, (exists) => {
     if (exists) {
       console.log('exit: exists');
-      cb(null, outputPath);
+      cb(null, final);
       return;
     }
 
     const offset = Math.round(Math.random() * (MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET);
-    const args = [ '-loop', '1', '-i', image, '-i', audio, '-ss', offset , '-t', MAX_LENGTH, '-vf', `crop=${WIDTH}:${HEIGHT}`, '-strict', '-2', '-shortest', outputPath ];
+    const args = [ '-loop', '1', '-i', image, '-i', audio, '-t', MAX_LENGTH, '-strict', '-2', '-ss', '60', '-r', '30', '-c:v', 'libx264', '-c:a', 'aac', '-b:v', '1M', '-vf', `crop=${WIDTH}:${HEIGHT}`, '-shortest', intermediate ];
+    console.log(args.join('  '));
     const ffmpeg = spawn('ffmpeg', args, { stdio: 'inherit' });
 
     ffmpeg.on('error', (err) => {
@@ -79,7 +82,15 @@ function convert({ image, audio }, cb) {
         return;
       }
       console.log('exit: normal');
-      cb(null, outputPath);
+      const handbrake = spawn('HandBrakeCLI', ['-i', intermediate, '-o', final, '-e', 'x264', '-q', '20', '-B', '160', '-r', '30'])
+        .on('error', cb)
+        .on('close', (code) => {
+          if (code) {
+            cb(code);
+            return;
+          }
+          cb(null, final);
+        });
     });
   });
 }

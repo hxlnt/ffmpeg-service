@@ -24,8 +24,8 @@ request(
   }, function (error, response, body) {
     if(response.statusCode == 200){
       const images = JSON.parse(body).images;
-      // let randimg = Math.floor(Math.random() * images.value.length);
-      let randimg = 1;
+      let randimg = Math.floor(Math.random() * images.value.length);
+      // let randimg = 1;
       image = images.value[randimg].contentUrl;
       // API call
         request(
