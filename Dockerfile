@@ -4,13 +4,10 @@ MAINTAINER Suz Hinton noopkat@gmail.com
 
 # set up os tools
 RUN rm -rf /var/lib/apt/lists/*
-RUN apt-get clean
-RUN apt-get update
-RUN apt-get install curl -y
-RUN apt-get install libav-tools x264 x265 ffmpeg -y
+RUN apt-get clean && apt-get update
+RUN apt-get install curl git libav-tools x264 x265 ffmpeg -y
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - 
 RUN apt-get install -y nodejs -y
-RUN apt-get install git -y
 
 # set up project
 RUN mkdir /var/www
