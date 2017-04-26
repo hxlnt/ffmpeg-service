@@ -29,7 +29,7 @@ module.exports.tweet = (username, filepath, callback) => {
     T.post('media/metadata/create', meta_params, (err) => {
       if (!err) {
           // now we can reference the media and post a tweet (media will attach to the tweet)
-          const params = { status: `@${username} escape your world with Sun Ra #hackchi`, media_ids: [mediaIdStr] };
+          const params = { status: `Hey there, @${username}. Wanna escape? Space is the place. #hackchi`, media_ids: [mediaIdStr] };
 
           T.post('statuses/update', params, (err) => {
             return callback(err);
