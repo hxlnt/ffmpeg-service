@@ -23,22 +23,33 @@ let object = {
     "audio": "https://archive.org/download/philippe-2014/Edward%20Ka-Spel%20&%20Philippe%20Petit-Subterranean,%20Homesick%20www.mp3lio.net%20.mp3"
 }
 
-// API call
 request(
-    { method: 'PUT',
-    uri: 'api/create',
-    port: 3001,
-    headers: { 'content-type': 'application/json' },
-    body: object
+    { method: 'GET',
+    uri: 'https://api.cognitive.microsoft.com/bing/v5.0/search?exoplanet',
+    headers: { "Content-Type": "application/json",'Ocp-Apim-Subscription-Key': 'process.env.bingsearchkey' }
+  }, function (error, response, body) {
+    if(response.statusCode == 200){
+      let randimg = Math.floor(Math.random() * body.images.value.length);
+      image = body.images.value[randimg].contentUrl;
+      // API call
+        request(
+            { method: 'PUT',
+            uri: 'api/create',
+            port: 3001,
+            headers: { 'content-type': 'application/json' },
+            body: object
+            }
+          , function (error, response, body) {
+              if(response.statusCode == 200){
+                console.log('Success')
+              } else {
+                console.log('error: '+ response.statusCode)
+                console.log(body)
+              }
+            }
+          );
     }
-  , function (error, response, body) {
-      if(response.statusCode == 201){
-        console.log('Success')
-      } else {
-        console.log('error: '+ response.statusCode)
-        console.log(body)
-      }
-    }
-  );
+    else {console.log(`ERROR: ${error}`)}
+  }
+);
 
-});
