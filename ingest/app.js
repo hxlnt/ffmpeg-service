@@ -17,27 +17,25 @@ var stream = T.stream('statuses/filter', { track: ['@thesolarra'] })
 // Send data to API
 stream.on('tweet', function() {
 
-// Defining static data for now
-let object = {
-    "image": "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1710a.jpg",
-    "audio": "https://archive.org/download/radioshow_080502_planetearth/radioshow_080502_planetearth.ogg"
-}
-
 request(
     { method: 'GET',
-    uri: 'https://api.cognitive.microsoft.com/bing/v5.0/search?exoplanet',
-    headers: { "Content-Type": "application/json",'Ocp-Apim-Subscription-Key': 'process.env.bingsearchkey' }
+    uri: 'https://api.cognitive.microsoft.com/bing/v5.0/search?q=exoplanet&mkt=en-us',
+    headers: { "Content-Type": "application/json",'Ocp-Apim-Subscription-Key': process.env.bingsearchkey }
   }, function (error, response, body) {
     if(response.statusCode == 200){
-      let randimg = Math.floor(Math.random() * body.images.value.length);
-      image = body.images.value[randimg].contentUrl;
+      const images = JSON.parse(body).images;
+      let randimg = Math.floor(Math.random() * images.value.length);
+      image = images.value[randimg].contentUrl;
       // API call
         request(
-            { method: 'PUT',
-            uri: 'api/create',
+            { method: 'POST',
+            uri: 'http://localhost:3001/api/create',
             port: 3001,
             headers: { 'content-type': 'application/json' },
-            body: object
+            body: JSON.stringify({
+              image,
+              audio: "https://archive.org/download/radioshow_080502_planetearth/radioshow_080502_planetearth.ogg"
+            })
             }
           , function (error, response, body) {
               if(response.statusCode == 200){

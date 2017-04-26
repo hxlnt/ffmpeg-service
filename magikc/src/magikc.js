@@ -9,7 +9,9 @@ const async = require('async');
 const WIDTH = 640;
 const HEIGHT = 480;
 
-const MAX_LENGTH = 30;
+const MAX_LENGTH = 5;
+const MIN_OFFSET = 60;
+const MAX_OFFSET = 60 * 60;
 
 const rootDir = path.join(os.tmpdir(), 'magikc');
 if (!fs.existsSync(rootDir)) {
@@ -39,8 +41,9 @@ function download(uri, cb) {
 function convert({ image, audio }, cb) {
   let errored = false;
   const outputPath = path.join(rootDir, `${uuid()}.mp4`);
-  const args = [ '-loop', '1', '-i', image, '-i', audio, '-t', MAX_LENGTH, '-vf', `scale=${WIDTH}:ih*${WIDTH}/iw, crop=${WIDTH}:${HEIGHT}`, '-shortest', outputPath ];
-  const ffmpeg = spawn('ffmpeg', args);
+  const offset = Math.round(Math.random() * (MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET);
+  const args = [ '-loop', '1', '-i', image, '-i', audio, '-ss', offset , '-t', MAX_LENGTH, '-vf', `scale=${WIDTH}:ih*${WIDTH}/iw, crop=${WIDTH}:${HEIGHT}`, '-shortest', outputPath ];
+  const ffmpeg = spawn('ffmpeg', args, { stdio: 'inherit' });
 
   ffmpeg.on('error', (err) => {
     if (!errored) {

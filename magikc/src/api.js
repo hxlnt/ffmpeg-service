@@ -1,6 +1,7 @@
 const async = require('async');
 const express = require('express');
 const bodyParser = require('body-parser');
+const request = require('request');
 const magikc = require('./magikc');
 
 const app = express();
@@ -25,9 +26,25 @@ app.post('/api/create', (req, res) => {
         return;
       }
       console.log(`MAGIKC: Encoded file written to: ${filepath}`);
-      console.log(`MAGIKC: Request took ${Date.now() - startTime}ms`);
-      // Call next endpoint here;
-      res.send('ok');
+      request({
+        method: 'POST',
+        uri: 'http://localhost:3002/api/tweet',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          filepath
+        })
+      }, (err, res, body) => {
+        if (err) {
+          res.sendStatus(500, err);
+          return;
+        }
+        if (res.statusCode !== 200) {
+          res.sendStatus(500, `Tweeter service returned status code ${res.statusCode}`);
+          return;
+        }
+        console.log(`MAGIKC: Request took ${Date.now() - startTime}ms`);
+        res.send('ok');
+      });
     });
   });
 });
