@@ -24,7 +24,8 @@ request(
   }, function (error, response, body) {
     if(response.statusCode == 200){
       const images = JSON.parse(body).images;
-      let randimg = Math.floor(Math.random() * images.value.length);
+      // let randimg = Math.floor(Math.random() * images.value.length);
+      let randimg = 1;
       image = images.value[randimg].contentUrl;
       // API call
         request(
@@ -38,7 +39,9 @@ request(
             })
             }
           , function (error, response, body) {
-              if(response.statusCode == 200){
+              if (error) {
+                console.log('error: ' + error);
+              } else if(response.statusCode == 200){
                 console.log('Success')
               } else {
                 console.log('error: '+ response.statusCode)

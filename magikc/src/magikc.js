@@ -5,6 +5,7 @@ const uuid = require('uuid');
 const fs = require('fs');
 const request = require('request');
 const async = require('async');
+const crypto = require('crypto');
 
 const WIDTH = 640;
 const HEIGHT = 480;
@@ -38,28 +39,47 @@ function download(uri, cb) {
   });
 }
 
+function hashFilePath(filepath) {
+  const hash = crypto.createHash('md5');
+  hash.update(filepath);
+  return hash.digest('hex');
+}
+
 function convert({ image, audio }, cb) {
   let errored = false;
-  const outputPath = path.join(rootDir, `${uuid()}.mp4`);
-  const offset = Math.round(Math.random() * (MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET);
-  const args = [ '-loop', '1', '-i', image, '-i', audio, '-ss', offset , '-t', MAX_LENGTH, '-vf', `scale=${WIDTH}:ih*${WIDTH}/iw, crop=${WIDTH}:${HEIGHT}`, '-shortest', outputPath ];
-  const ffmpeg = spawn('ffmpeg', args, { stdio: 'inherit' });
+  const outputPath = path.join(rootDir, `${hashFilePath(image)}-${hashFilePath(audio)}.mp4`);
 
-  ffmpeg.on('error', (err) => {
-    if (!errored) {
-      cb(err);
-      ffmpeg.kill();
-      errored = true;
-    }
-  });
-
-  ffmpeg.on('close', (code) => {
-    if (errored) {
+  fs.exists(outputPath, (exists) => {
+    if (exists) {
+      console.log('exit: exists');
+      cb(null, outputPath);
       return;
     }
-    if (code) {
-      cb(`Exited with code ${code}`);
-    }
-    cb(null, outputPath);
+
+    const offset = Math.round(Math.random() * (MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET);
+    const args = [ '-loop', '1', '-i', image, '-i', audio, '-ss', offset , '-t', MAX_LENGTH, '-vf', `crop=${WIDTH}:${HEIGHT}`, '-strict', '-2', '-shortest', outputPath ];
+    const ffmpeg = spawn('ffmpeg', args, { stdio: 'inherit' });
+
+    ffmpeg.on('error', (err) => {
+      if (!errored) {
+        console.log('exit: on error');
+        cb(err);
+        ffmpeg.kill();
+        errored = true;
+      }
+    });
+
+    ffmpeg.on('close', (code) => {
+      if (errored) {
+        return;
+      }
+      if (code) {
+        console.log('exit: exited with code');
+        cb(`Exited with code ${code}`);
+        return;
+      }
+      console.log('exit: normal');
+      cb(null, outputPath);
+    });
   });
 }
