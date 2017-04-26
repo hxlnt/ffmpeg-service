@@ -5,7 +5,7 @@ const request = require('request');
 // Set up twitter and app credentials (See dev.twitter.com)
 const Twit = require('twit');
 const T = new Twit({
-    consumer_key:         process.env.mytwitterconsumerkey, 
+    consumer_key:         process.env.mytwitterconsumerkey,
     consumer_secret:      process.env.mytwitterconsumersecret,
     access_token:         process.env.mytwitteraccesstokenkey,
     access_token_secret:  process.env.mytwitteraccesstokensecret
@@ -20,19 +20,18 @@ stream.on('tweet', function() {
 // Defining static data for now
 let object = {
     "image": "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1710a.jpg",
-    "audio": "https://archive.org/download/philippe-2014/Edward%20Ka-Spel%20&%20Philippe%20Petit-Subterranean,%20Homesick%20www.mp3lio.net%20.mp3"
+    "audio": "https://archive.org/download/radioshow_080502_planetearth/radioshow_080502_planetearth.ogg"
 }
 
 // API call
 request(
-    { method: 'PUT',
-    uri: 'api/create',
-    port: 3001,
+    { method: 'POST',
+    uri: 'http://localhost:3001/api/create',
     headers: { 'content-type': 'application/json' },
-    body: object
+    body: JSON.stringify(object)
     }
   , function (error, response, body) {
-      if(response.statusCode == 201){
+      if(response.statusCode == 200){
         console.log('Success')
       } else {
         console.log('error: '+ response.statusCode)
