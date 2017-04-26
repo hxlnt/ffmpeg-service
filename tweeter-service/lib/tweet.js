@@ -14,7 +14,7 @@ module.exports.init = () => {
   T = new Twit(options);
 };
 
-module.exports.tweet = (filepath, callback) => {
+module.exports.tweet = (username, filepath, callback) => {
   //Posts media to twitter in chunks
   T.postMediaChunked({ file_path: filepath }, (err, data) => {
     if (err) {
@@ -29,7 +29,7 @@ module.exports.tweet = (filepath, callback) => {
     T.post('media/metadata/create', meta_params, (err) => {
       if (!err) {
           // now we can reference the media and post a tweet (media will attach to the tweet)
-          const params = { status: 'escape your world with Sun Ra #hackchi', media_ids: [mediaIdStr] };
+          const params = { status: `@${username} escape your world with Sun Ra #hackchi`, media_ids: [mediaIdStr] };
 
           T.post('statuses/update', params, (err) => {
             return callback(err);
