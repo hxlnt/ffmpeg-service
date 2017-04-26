@@ -15,7 +15,7 @@ const T = new Twit({
 var stream = T.stream('statuses/filter', { track: ['@thesolarra'] })
 
 // Send data to API
-stream.on('tweet', function() {
+stream.on('tweet', function(json) {
 
 request(
     { method: 'GET',
@@ -34,7 +34,8 @@ request(
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
               image,
-              audio: "https://archive.org/download/radioshow_080502_planetearth/radioshow_080502_planetearth.ogg"
+              audio: "https://archive.org/download/radioshow_080502_planetearth/radioshow_080502_planetearth.ogg",
+              username: json.user.screen_name
             })
             }
           , function (error, response, body) {
