@@ -24,7 +24,6 @@ let object = {
 }
 
 request(
-<<<<<<< HEAD
     { method: 'GET',
     uri: 'https://api.cognitive.microsoft.com/bing/v5.0/search?exoplanet',
     headers: { "Content-Type": "application/json",'Ocp-Apim-Subscription-Key': 'process.env.bingsearchkey' }
@@ -53,20 +52,4 @@ request(
     else {console.log(`ERROR: ${error}`)}
   }
 );
-=======
-    { method: 'POST',
-    uri: 'http://localhost:3001/api/create',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(object)
-    }
-  , function (error, response, body) {
-      if(response.statusCode == 200){
-        console.log('Success')
-      } else {
-        console.log('error: '+ response.statusCode)
-        console.log(body)
-      }
-    }
-  );
->>>>>>> 01fa498a52d677086f2be5e43892ff238712b076
-
+});
