@@ -11,18 +11,18 @@ app.post('/api/create', (req, res) => {
   console.log('MAGIKC: Received request for:');
   console.log(`  Audio: ${req.body.audio}`);
   console.log(`  Image: ${req.body.image}`);
+  console.log(`  Username: ${req.body.username}`);
   const startTime = Date.now();
+  res.send('ok');
   async.parallel({
     audio: (next) => magikc.download(req.body.audio, next),
     image: (next) => magikc.download(req.body.image, next),
   }, (err, results) => {
     if (err) {
-      res.sendStatus(500, err);
       return;
     }
     magikc.convert(results, (err, filepath) => {
       if (err) {
-        res.sendStatus(500, err);
         return;
       }
       console.log(`MAGIKC: Encoded file written to: ${filepath}`);
@@ -31,19 +31,11 @@ app.post('/api/create', (req, res) => {
         uri: 'http://localhost:3002/api/tweet',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          filepath
+          filepath,
+          username: req.body.username
         })
-      }, (err, res, body) => {
-        if (err) {
-          res.sendStatus(500, err);
-          return;
-        }
-        if (res.statusCode !== 200) {
-          res.sendStatus(500, `Tweeter service returned status code ${res.statusCode}`);
-          return;
-        }
+      }, (err, rres, body) => {
         console.log(`MAGIKC: Request took ${Date.now() - startTime}ms`);
-        res.send('ok');
       });
     });
   });

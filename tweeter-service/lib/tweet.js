@@ -4,10 +4,10 @@ let T;
 module.exports.init = () => {
   // ENV variables
   const options = {
-    consumer_key: process.env.consumer_key,
-    consumer_secret: process.env.consumer_secret,
-    access_token: process.env.access_token,
-    access_token_secret: process.env.access_token_secret,
+    consumer_key:         process.env.mytwitterconsumerkey,
+    consumer_secret:      process.env.mytwitterconsumersecret,
+    access_token:         process.env.mytwitteraccesstokenkey,
+    access_token_secret:  process.env.mytwitteraccesstokensecret,
     timeout_ms: 60*1000  // optional HTTP request timeout to apply to all requests.
   }
   // new Twitter connection
@@ -16,10 +16,10 @@ module.exports.init = () => {
 
 module.exports.tweet = (filepath, callback) => {
   //Posts media to twitter in chunks
-  T.postMediaChunked({ file_path: filepath }, (err, data) => {  
+  T.postMediaChunked({ file_path: filepath }, (err, data) => {
     if (err) {
       console.log(err);
-      return callback(new Error('Something failed with chunking the media. You probably messed up the filepath object.'))  
+      return callback(new Error('Something failed with chunking the media. You probably messed up the filepath object.'))
     }
 
     const mediaIdStr = data.media_id_string;
