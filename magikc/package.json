@@ -1,0 +1,30 @@
+{
+  "name": "magikc",
+  "version": "1.0.0",
+  "description": "Microservice for converting/merging sources using ffmpeg",
+  "main": "src/index.js",
+  "bin": {
+    "magikcd": "./bin/magikc.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./bin/magikc.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hxlnt/ffmpeg-service.git"
+  },
+  "author": "Bryan Hughes <bryan.hughes@microsoft.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hxlnt/ffmpeg-service/issues"
+  },
+  "homepage": "https://github.com/hxlnt/ffmpeg-service#readme",
+  "dependencies": {
+    "async": "^2.3.0",
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "request": "^2.81.0",
+    "uuid": "^3.0.1"
+  }
+}
