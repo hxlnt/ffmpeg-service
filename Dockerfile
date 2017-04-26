@@ -6,7 +6,6 @@ MAINTAINER Suz Hinton noopkat@gmail.com
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get clean
 RUN apt-get update
-RUN apt-get install apt
 RUN apt-get install curl -y
 RUN apt-get install libav-tools x264 x265 ffmpeg -y
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - 
